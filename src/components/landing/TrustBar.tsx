@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { ShieldCheck, Clock, Wrench, BadgeCheck, Truck, ThumbsUp } from "lucide-react";
 
 const brands = ["ROWA", "GRUNDFOS", "SALMSON", "DAB", "ESPA", "FLYGT", "PEDROLLO", "VULCANO"];
@@ -30,16 +29,7 @@ export const TrustBar = () => (
         </div>
 
         <div className="flex overflow-hidden group">
-          <motion.div 
-            initial={{ x: 0 }}
-            animate={{ x: "-50%" }}
-            transition={{ 
-              duration: 30, 
-              repeat: Infinity, 
-              ease: "linear" 
-            }}
-            className="flex flex-nowrap items-center gap-16 md:gap-32 whitespace-nowrap px-8"
-          >
+          <div className="flex animate-marquee flex-nowrap items-center gap-16 whitespace-nowrap px-8 md:gap-32">
             {[...brands, ...brands].map((brand, i) => (
               <span 
                 key={i} 
@@ -48,7 +38,7 @@ export const TrustBar = () => (
                 {brand}
               </span>
             ))}
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>
@@ -56,13 +46,9 @@ export const TrustBar = () => (
     {/* Trust Pillars Grid */}
     <div className="container mx-auto px-4">
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 md:gap-4">
-        {items.map(({ icon: Icon, label }, i) => (
-          <motion.div 
+        {items.map(({ icon: Icon, label }) => (
+          <div
             key={label}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
             className="flex flex-col items-center gap-4 group cursor-default"
           >
             <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center group-hover:bg-accent group-hover:border-accent group-hover:shadow-xl group-hover:shadow-accent/20 transition-all duration-500">
@@ -71,7 +57,7 @@ export const TrustBar = () => (
             <span className="text-xs font-extrabold text-slate-600 group-hover:text-slate-900 leading-tight text-center transition-colors">
               {label}
             </span>
-          </motion.div>
+          </div>
         ))}
       </div>
     </div>

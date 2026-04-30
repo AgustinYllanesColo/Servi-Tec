@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Settings, ShieldCheck, CheckCircle2 } from "lucide-react";
 
 const parts = [
@@ -12,11 +11,7 @@ export const PartsSection = () => (
   <section className="py-24 bg-slate-950 overflow-hidden">
     <div className="container mx-auto px-4">
       <div className="grid lg:grid-cols-2 gap-16 items-center">
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-        >
+        <div className="reveal">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-[10px] font-black tracking-[0.2em] text-accent uppercase mb-6">
             <Settings className="w-3.5 h-3.5" /> Stock Permanente
           </div>
@@ -39,59 +34,49 @@ export const PartsSection = () => (
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          className="relative"
-        >
+        <div className="relative reveal">
           <div className="absolute inset-0 bg-accent/20 blur-[100px] rounded-full" />
           <div className="relative p-10 md:p-16 rounded-[4rem] bg-white/5 border border-white/10 backdrop-blur-2xl overflow-hidden">
-            <div className="flex items-center justify-between mb-12">
-              <div className="flex items-center gap-3">
-                <ShieldCheck className="w-10 h-10 text-accent" />
+            <h3 className="text-white font-black text-3xl mb-8">Confianza comprobada</h3>
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="mt-1 w-11 h-11 grid place-items-center rounded-2xl bg-accent text-slate-950">
+                  <CheckCircle2 className="w-5 h-5" />
+                </div>
                 <div>
-                  <div className="text-white font-black text-xl italic tracking-tighter">QUALITY ASSURED</div>
-                  <div className="text-xs text-slate-500 font-bold uppercase tracking-widest">In-house Inventory</div>
+                  <div className="text-white font-bold">Repuestos genuinos</div>
+                  <div className="text-slate-400 text-sm">Componentes certificados para ROWA con garantía real.</div>
                 </div>
               </div>
-              <div className="text-accent font-black text-5xl opacity-20">ROWA</div>
-            </div>
-            
-            <div className="space-y-6">
-              <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                <motion.div 
-                  initial={{ width: 0 }} 
-                  whileInView={{ width: "95%" }} 
-                  className="h-full bg-accent" 
-                />
+
+              <div className="flex items-start gap-4">
+                <div className="mt-1 w-11 h-11 grid place-items-center rounded-2xl bg-accent text-slate-950">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-white font-bold">Montaje profesional</div>
+                  <div className="text-slate-400 text-sm">Técnicos matriculados y atención en sitio sin demoras.</div>
+                </div>
               </div>
-              <div className="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                <span>Optimización de Desempeño</span>
-                <span className="text-white">95%</span>
-              </div>
-              
-              <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                <motion.div 
-                  initial={{ width: 0 }} 
-                  whileInView={{ width: "100%" }} 
-                  transition={{ delay: 0.2 }}
-                  className="h-full bg-accent" 
-                />
-              </div>
-              <div className="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                <span>Compatibilidad Original</span>
-                <span className="text-white">100%</span>
+
+              <div className="flex items-start gap-4">
+                <div className="mt-1 w-11 h-11 grid place-items-center rounded-2xl bg-accent text-slate-950">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-white font-bold">Soporte inmediato</div>
+                  <div className="text-slate-400 text-sm">Seguimiento post-servicio y reparación con repuestos originales.</div>
+                </div>
               </div>
             </div>
 
-            <p className="mt-12 text-slate-400 text-sm leading-relaxed italic">
-              "El uso de componentes originales no es opcional. Es lo que garantiza que la bomba no vuelva a fallar en 6 meses."
+            <p className="mt-10 text-slate-400 text-sm leading-relaxed">
+              Nuestro historial con bombas ROWA respalda reparaciones confiables que evitan nuevas paradas.
             </p>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   </section>

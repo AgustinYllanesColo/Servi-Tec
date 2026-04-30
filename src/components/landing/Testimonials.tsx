@@ -1,5 +1,4 @@
 import { Star, ShieldCheck, BadgeCheck } from "lucide-react";
-import { motion } from "framer-motion";
 
 const testimonials = [
   {
@@ -42,14 +41,10 @@ export const Testimonials = () => (
       </div>
 
       <div className="grid md:grid-cols-3 gap-8">
-        {testimonials.map((t, i) => (
-          <motion.div
+        {testimonials.map((t) => (
+          <article
             key={t.name}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.15 }}
-            className="group relative p-10 rounded-[3rem] bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-700"
+            className="group relative rounded-2xl border border-slate-100 bg-slate-50 p-8 transition-all duration-500 hover:bg-white hover:shadow-2xl hover:shadow-slate-200/50 md:p-10"
           >
             <div className="flex text-amber-400 mb-6 gap-1">
               {[...Array(t.rating)].map((_, i) => (
@@ -71,7 +66,7 @@ export const Testimonials = () => (
               <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t.role}</span>
               <span className="text-[10px] font-medium text-slate-400 mt-2 italic">{t.service} • {t.location}</span>
             </div>
-          </motion.div>
+          </article>
         ))}
       </div>
     </div>

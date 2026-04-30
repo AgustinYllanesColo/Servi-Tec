@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Check, ArrowRight, AlertCircle, Droplets, Zap, Clock, ShieldCheck } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AlertCircle, ArrowLeft, ArrowRight, Check, Clock, Droplets, ShieldCheck, Zap } from "lucide-react";
 import { waLink } from "@/config/contact";
 
 const steps = [
@@ -12,7 +11,7 @@ const steps = [
       { id: "poca-presion", label: "Poca presión de agua", icon: Droplets },
       { id: "no-corta", label: "No corta (funciona seguido)", icon: Clock },
       { id: "pierde-agua", label: "Pierde agua / Ruidos raros", icon: AlertCircle },
-    ]
+    ],
   },
   {
     id: 2,
@@ -21,7 +20,7 @@ const steps = [
       { id: "rowa", label: "ROWA (Especialistas)", icon: ShieldCheck },
       { id: "grundfos", label: "Grundfos / Salmson", icon: ShieldCheck },
       { id: "otra", label: "Otra / No sé", icon: ShieldCheck },
-    ]
+    ],
   },
   {
     id: 3,
@@ -31,92 +30,131 @@ const steps = [
       { id: "gba-norte", label: "GBA Norte", icon: ShieldCheck },
       { id: "gba-oeste", label: "GBA Oeste", icon: ShieldCheck },
       { id: "gba-sur", label: "GBA Sur", icon: ShieldCheck },
-    ]
-  }
+    ],
+  },
 ];
+
+const optionLabels = new Map(steps.flatMap((step) => step.options.map((option) => [option.id, option.label])));
 
 export const DiagnosisWidget = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [isFinished, setIsFinished] = useState(false);
 
+  const getAnswerLabel = (stepIndex: number) => {
+    const answer = answers[stepIndex];
+    return answer ? optionLabels.get(answer) || answer : "";
+  };
+
+  const summary = {
+    problem: getAnswerLabel(0),
+    brand: getAnswerLabel(1).replace(" (Especialistas)", ""),
+    zone: getAnswerLabel(2),
+  };
+
   const handleOption = (optionId: string) => {
     setAnswers({ ...answers, [currentStep]: optionId });
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
-    } else {
-      setIsFinished(true);
+      return;
     }
+    setIsFinished(true);
   };
 
-  const getUrgencyMessage = () => {
-    const problem = answers[0];
-    const brand = answers[1];
-    const zone = answers[2];
-    return `Hola, realicé el diagnóstico web. Mi problema es: ${problem}, marca: ${brand}, zona: ${zone}. Necesito un técnico urgente.`;
+  const handleBack = () => {
+    if (currentStep === 0) return;
+    setCurrentStep(currentStep - 1);
   };
+
+  const getUrgencyMessage = () =>
+    `Hola, realicé el diagnóstico web. Problema: ${summary.problem}. Marca: ${summary.brand}. Zona: ${summary.zone}. Necesito coordinar un técnico.`;
 
   return (
-    <section id="diagnosis" className="py-20 md:py-32">
+    <section id="diagnosis" className="py-14 md:py-28">
       <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto bg-primary rounded-[3rem] p-8 md:p-16 shadow-2xl relative overflow-hidden">
-          {/* Background decoration */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl -mr-32 -mt-32" />
-          
+        <div className="relative mx-auto max-w-4xl overflow-hidden rounded-3xl bg-primary p-6 shadow-2xl md:p-12">
+          <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-accent/10 blur-3xl -mr-32 -mt-32" />
+
           <div className="relative z-10">
             {!isFinished ? (
               <>
-                <div className="mb-10">
-                  <div className="flex gap-2 mb-4">
+                <div className="mb-8">
+                  <div className="mb-5 flex items-center justify-between gap-4">
+                    <span className="text-xs font-black uppercase tracking-[0.22em] text-accent">
+                      Paso {currentStep + 1} de {steps.length}
+                    </span>
+                    {currentStep > 0 && (
+                      <button
+                        type="button"
+                        onClick={handleBack}
+                        className="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-2 text-xs font-bold text-white/80 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                      >
+                        <ArrowLeft className="h-4 w-4" /> Atrás
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="mb-5 flex gap-2" aria-hidden="true">
                     {steps.map((_, i) => (
-                      <div 
-                        key={i} 
-                        className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${i <= currentStep ? 'bg-accent' : 'bg-white/10'}`} 
+                      <div
+                        key={i}
+                        className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${
+                          i <= currentStep ? "bg-accent" : "bg-white/10"
+                        }`}
                       />
                     ))}
                   </div>
-                  <h2 className="font-display font-extrabold text-3xl md:text-5xl text-white mb-4">
+
+                  <h2 className="mb-3 font-display text-3xl font-extrabold leading-tight text-white md:text-5xl">
                     {steps[currentStep].question}
                   </h2>
+                  <p className="max-w-2xl text-sm text-white/60 md:text-base">
+                    Elegí la opción más cercana. Con esto armamos un mensaje claro para coordinar más rápido.
+                  </p>
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   {steps[currentStep].options.map((option) => (
                     <button
                       key={option.id}
                       onClick={() => handleOption(option.id)}
-                      className="group flex items-center gap-4 p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white hover:border-white transition-all text-left"
+                      className="group flex min-h-24 items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition-all hover:border-white hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                     >
-                      <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
-                        <option.icon className="w-6 h-6 text-accent" />
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 transition-colors group-hover:bg-accent/20">
+                        <option.icon className="h-6 w-6 text-accent" />
                       </div>
-                      <span className="font-bold text-white group-hover:text-primary text-lg">{option.label}</span>
+                      <span className="text-lg font-bold text-white group-hover:text-primary">{option.label}</span>
                     </button>
                   ))}
                 </div>
               </>
             ) : (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center"
-              >
-                <div className="w-24 h-24 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-8 border border-accent/20">
-                  <Check className="w-12 h-12 text-accent" />
+              <div className="animate-float-up text-center">
+                <div className="mx-auto mb-7 flex h-20 w-20 items-center justify-center rounded-2xl border border-accent/20 bg-accent/15">
+                  <Check className="h-10 w-10 text-accent" />
                 </div>
-                <h3 className="text-3xl md:text-5xl font-extrabold text-white mb-6">¡Diagnóstico listo!</h3>
-                <p className="text-white/70 text-xl mb-10 max-w-xl mx-auto">
-                  Tenemos técnicos disponibles en tu zona para solucionar este problema hoy mismo.
+                <h3 className="mb-5 text-3xl font-extrabold text-white md:text-5xl">Diagnóstico listo</h3>
+                <p className="mx-auto mb-7 max-w-xl text-lg text-white/70 md:text-xl">
+                  Tenemos la información clave para responderte sin ida y vuelta innecesaria.
                 </p>
-                <a 
+
+                <div className="mx-auto mb-8 grid max-w-xl gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
+                  <div className="rounded-xl bg-white/5 px-4 py-3 text-sm font-bold text-white">
+                    Problema: {summary.problem}
+                  </div>
+                  <div className="rounded-xl bg-white/5 px-4 py-3 text-sm font-bold text-white">Marca: {summary.brand}</div>
+                  <div className="rounded-xl bg-white/5 px-4 py-3 text-sm font-bold text-white">Zona: {summary.zone}</div>
+                </div>
+
+                <a
                   href={waLink(getUrgencyMessage())}
                   target="_blank"
                   rel="noopener"
-                  className="inline-flex items-center justify-center gap-3 h-16 px-10 rounded-2xl bg-whatsapp text-white font-black text-xl hover:scale-105 transition-transform"
+                  className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-whatsapp px-8 text-lg font-black text-white transition-transform hover:scale-[1.02] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
-                  Enviar a WhatsApp <ArrowRight className="w-6 h-6" />
+                  Enviar a WhatsApp <ArrowRight className="h-6 w-6" />
                 </a>
-              </motion.div>
+              </div>
             )}
           </div>
         </div>

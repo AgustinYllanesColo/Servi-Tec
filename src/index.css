@@ -61,7 +61,10 @@
 
 @layer base {
   * { @apply border-border; }
-  html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, sans-serif;
@@ -73,6 +76,28 @@
 }
 
 @layer utilities {
+  section[id],
+  div[id] {
+    scroll-margin-top: 5rem;
+  }
+
+  @media (max-width: 767px) {
+    body {
+      padding-bottom: 6.25rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
   .bg-hero { background: var(--gradient-hero); }
   .bg-accent-gradient { background: var(--gradient-accent); }
   .bg-dark-gradient { background: var(--gradient-dark); }
@@ -108,5 +133,14 @@
   @keyframes shimmer {
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
   }
 }

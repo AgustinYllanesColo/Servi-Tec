@@ -1,85 +1,60 @@
-import { Phone, MessageCircle } from "lucide-react";
+import { MessageCircle, Phone } from "lucide-react";
+import { useEffect, useState } from "react";
 import { CONTACT, waLink } from "@/config/contact";
-import { motion, useMotionValue, useSpring } from "framer-motion";
-import { useRef } from "react";
 
-const Magnetic = ({ children }: { children: React.ReactNode }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const springConfig = { damping: 20, stiffness: 150 };
-  const springX = useSpring(x, springConfig);
-  const springY = useSpring(y, springConfig);
+export const FloatingCTAs = () => {
+  const [showMobileBar, setShowMobileBar] = useState(false);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!ref.current) return;
-    const { clientX, clientY } = e;
-    const { left, top, width, height } = ref.current.getBoundingClientRect();
-    const centerX = left + width / 2;
-    const centerY = top + height / 2;
-    x.set((clientX - centerX) * 0.4);
-    y.set((clientY - centerY) * 0.4);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
+  useEffect(() => {
+    const updateVisibility = () => setShowMobileBar(window.scrollY > 360);
+    updateVisibility();
+    window.addEventListener("scroll", updateVisibility, { passive: true });
+    return () => window.removeEventListener("scroll", updateVisibility);
+  }, []);
 
   return (
-    <motion.div
-      ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ x: springX, y: springY }}
-    >
-      {children}
-    </motion.div>
-  );
-};
-
-export const FloatingCTAs = () => (
-  <>
-    {/* Floating buttons (desktop + tablet) */}
-    <div className="hidden md:flex fixed bottom-10 right-10 z-50 flex-col gap-5">
-      <Magnetic>
+    <>
+      <div className="fixed bottom-10 right-10 z-50 hidden flex-col gap-4 md:flex">
         <a
           href={waLink()}
           target="_blank"
           rel="noopener"
           aria-label="WhatsApp"
-          className="w-20 h-20 rounded-full bg-whatsapp text-whatsapp-foreground grid place-items-center shadow-[0_20px_50px_rgba(34,197,94,0.4)] hover:scale-110 transition-transform pulse-ring"
+          className="grid h-16 w-16 place-items-center rounded-full bg-whatsapp text-whatsapp-foreground shadow-[0_18px_44px_rgba(34,197,94,0.34)] transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
         >
-          <MessageCircle className="w-10 h-10" />
+          <MessageCircle className="h-8 w-8" />
         </a>
-      </Magnetic>
-      <Magnetic>
         <a
           href={CONTACT.phoneHref}
           aria-label="Llamar"
-          className="w-20 h-20 rounded-full bg-accent text-accent-foreground grid place-items-center shadow-[0_20px_50px_rgba(20,184,166,0.3)] hover:scale-110 transition-transform"
+          className="grid h-16 w-16 place-items-center rounded-full bg-accent text-accent-foreground shadow-[0_18px_44px_rgba(20,184,166,0.28)] transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
         >
-          <Phone className="w-10 h-10" />
+          <Phone className="h-8 w-8" />
         </a>
-      </Magnetic>
-    </div>
+      </div>
 
-    {/* Mobile bottom bar */}
-    <div className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-primary/95 backdrop-blur-2xl border-t border-white/10 p-4 grid grid-cols-2 gap-3 shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
-      <a
-        href={waLink()}
-        target="_blank"
-        rel="noopener"
-        className="inline-flex items-center justify-center gap-3 h-16 rounded-2xl bg-whatsapp text-whatsapp-foreground font-black text-sm active:scale-95 transition-transform"
+      <div
+        data-testid="mobile-contact-bar"
+        className={`fixed inset-x-0 bottom-0 z-50 grid grid-cols-2 gap-3 border-t border-white/10 bg-primary/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-16px_40px_rgba(0,0,0,0.35)] backdrop-blur-2xl transition-transform duration-300 md:hidden ${
+          showMobileBar ? "translate-y-0" : "translate-y-full"
+        }`}
+        aria-hidden={!showMobileBar}
       >
-        <MessageCircle className="w-6 h-6" /> WhatsApp
-      </a>
-      <a
-        href={CONTACT.phoneHref}
-        className="inline-flex items-center justify-center gap-3 h-16 rounded-2xl bg-accent text-accent-foreground font-black text-sm active:scale-95 transition-transform"
-      >
-        <Phone className="w-6 h-6" /> Llamar
-      </a>
-    </div>
-  </>
-);
+        <a
+          href={waLink()}
+          target="_blank"
+          rel="noopener"
+          className="inline-flex h-14 min-w-0 items-center justify-center gap-2 rounded-2xl bg-whatsapp text-sm font-black text-whatsapp-foreground transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        >
+          <MessageCircle className="h-5 w-5" /> WhatsApp
+        </a>
+        <a
+          href={CONTACT.phoneHref}
+          className="inline-flex h-14 min-w-0 items-center justify-center gap-2 rounded-2xl bg-accent text-sm font-black text-accent-foreground transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        >
+          <Phone className="h-5 w-5" /> Llamar
+        </a>
+      </div>
+    </>
+  );
+};

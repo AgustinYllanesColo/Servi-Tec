@@ -1,11 +1,29 @@
-// Editable placeholders — reemplazar con datos reales de SERVITEC
-export const CONTACT = {
-  brand: "SERVITEC",
-  phoneDisplay: "+54 11 0000-0000",
-  phoneHref: "tel:+5411000000000",
-  whatsappNumber: "5491100000000", // sin + ni espacios
-  whatsappDefaultMsg: "Hola SERVITEC, necesito service de bomba de agua. ¿Pueden ayudarme?",
+const env = import.meta.env;
+
+export const sanitizeContactText = (value: string) => value.replace(/\s+/g, " ").trim();
+
+const onlyDigits = (value: string) => value.replace(/\D/g, "");
+
+export const normalizePhoneHref = (value: string) => {
+  const digits = onlyDigits(value);
+  return digits ? `tel:+${digits}` : "";
 };
 
-export const waLink = (msg?: string) =>
-  `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(msg ?? CONTACT.whatsappDefaultMsg)}`;
+export const buildWhatsAppLink = (whatsappNumber: string, msg: string) =>
+  `https://wa.me/${onlyDigits(whatsappNumber)}?text=${encodeURIComponent(sanitizeContactText(msg))}`;
+
+// Reemplazar estos valores con variables VITE_* reales antes de publicar campañas.
+export const CONTACT = {
+  brand: sanitizeContactText(env.VITE_CONTACT_BRAND || "SERVITEC"),
+  phoneDisplay: sanitizeContactText(env.VITE_CONTACT_PHONE_DISPLAY || "+54 11 0000-0000"),
+  phoneHref: normalizePhoneHref(env.VITE_CONTACT_PHONE_E164 || "+54 11 0000-0000"),
+  whatsappNumber: onlyDigits(env.VITE_CONTACT_WHATSAPP || "5491100000000"),
+  whatsappDefaultMsg: sanitizeContactText(
+    env.VITE_CONTACT_DEFAULT_MESSAGE || "Hola SERVITEC, necesito service de bomba de agua. ¿Pueden ayudarme?",
+  ),
+};
+
+export const contactHasPlaceholders =
+  CONTACT.phoneDisplay.includes("0000") || CONTACT.phoneHref.includes("0000") || CONTACT.whatsappNumber.includes("0000");
+
+export const waLink = (msg?: string) => buildWhatsAppLink(CONTACT.whatsappNumber, msg ?? CONTACT.whatsappDefaultMsg);

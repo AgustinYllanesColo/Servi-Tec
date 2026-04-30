@@ -8,7 +8,7 @@ export const Header = () => {
   const links = [
     { href: "#servicios", label: "Servicios" },
     { href: "#zonas", label: "Zonas" },
-    { href: "#opiniones", label: "Opiniones" },
+    { href: "#testimonios", label: "Opiniones" },
     { href: "#faq", label: "FAQ" },
     { href: "#contacto", label: "Contacto" },
   ];
@@ -51,15 +51,16 @@ export const Header = () => {
           </a>
           <button
             aria-label="Menú"
+            aria-expanded={open}
             onClick={() => setOpen(!open)}
-            className="lg:hidden ml-1 w-10 h-10 grid place-items-center text-white"
+            className="lg:hidden ml-1 w-10 h-10 grid place-items-center rounded-xl text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
       {open && (
-        <nav className="lg:hidden bg-primary border-t border-white/10 px-4 py-3 flex flex-col gap-1">
+        <nav aria-label="Menú móvil" className="lg:hidden bg-primary border-t border-white/10 px-4 py-3 flex flex-col gap-1">
           {links.map((l) => (
             <a
               key={l.href}

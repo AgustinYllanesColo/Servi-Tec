@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { X, AlertCircle, ArrowRight, MessageCircle } from "lucide-react";
 import { waLink } from "@/config/contact";
 
@@ -9,7 +8,9 @@ export const ExitIntentPopup = () => {
 
   useEffect(() => {
     const handleMouseOut = (e: MouseEvent) => {
-      if (e.clientY <= 0 && !hasShown) {
+      const isDesktop = window.matchMedia("(min-width: 1024px) and (hover: hover)").matches;
+      const leavesViewport = e.clientY <= 0 && e.relatedTarget === null;
+      if (isDesktop && leavesViewport && !hasShown) {
         setIsVisible(true);
         setHasShown(true);
       }
@@ -20,21 +21,18 @@ export const ExitIntentPopup = () => {
   }, [hasShown]);
 
   return (
-    <AnimatePresence>
+    <>
       {isVisible && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative w-full max-w-lg bg-white rounded-[3rem] p-10 md:p-14 shadow-2xl overflow-hidden"
-          >
+          <div className="relative w-full max-w-lg overflow-hidden rounded-3xl bg-white p-8 shadow-2xl animate-float-up md:p-12">
             {/* Background Accent */}
             <div className="absolute top-0 right-0 w-40 h-40 bg-accent/10 rounded-full blur-[60px] -mr-20 -mt-20" />
             
             <button 
+              type="button"
+              aria-label="Cerrar aviso"
               onClick={() => setIsVisible(false)}
-              className="absolute top-8 right-8 p-2 rounded-full hover:bg-slate-100 transition-colors"
+              className="absolute top-8 right-8 p-2 rounded-full hover:bg-slate-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               <X className="w-6 h-6 text-slate-400" />
             </button>
@@ -73,9 +71,9 @@ export const ExitIntentPopup = () => {
                 Atención Inmediata 24/7 • Garantía Escrita
               </p>
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
-    </AnimatePresence>
+    </>
   );
 };
