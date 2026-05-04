@@ -1,49 +1,85 @@
-import { Wrench, Droplets, Gauge, AlertTriangle, Power, Settings, ShieldAlert, Zap, MessageCircle } from "lucide-react";
+import { Droplets, Gauge, Power, Settings, MessageCircle } from "lucide-react";
 import { waLink } from "@/config/contact";
 
-const services = [
-  { icon: Wrench, title: "Reparación de bombas de agua", desc: "Diagnóstico y arreglo de bombas centrífugas, sumergibles y de superficie de todas las marcas.", msg: "Hola, necesito reparar mi bomba de agua." },
-  { icon: Droplets, title: "Service oficial bombas ROWA", desc: "Repuestos originales y reparación experta para toda la línea ROWA Tango, Press, Mini y similares.", msg: "Hola, necesito service para mi bomba ROWA." },
-  { icon: Gauge, title: "Presurizadoras", desc: "Instalación, calibración y reparación de presurizadoras para mejorar la presión de tu hogar.", msg: "Hola, quiero consultar por una presurizadora." },
-  { icon: AlertTriangle, title: "Baja presión de agua", desc: "Detectamos la causa y devolvemos la presión normal en duchas, calefón y termotanques.", msg: "Hola, tengo baja presión de agua en casa." },
-  { icon: Power, title: "Bomba que no arranca", desc: "Reparación de motores, capacitores, presóstatos y tableros eléctricos asociados.", msg: "Hola, mi bomba de agua no arranca." },
-  { icon: Settings, title: "Instalación nueva", desc: "Asesoramiento y colocación de bombas y tanques con materiales de primera calidad.", msg: "Hola, quiero instalar una bomba nueva." },
-  { icon: ShieldAlert, title: "Mantenimiento preventivo", desc: "Planes para consorcios, casas y comercios. Evitá quedarte sin agua antes de que ocurra.", msg: "Hola, quiero información sobre mantenimiento preventivo." },
-  { icon: Zap, title: "Emergencias 24 hs", desc: "Atendemos fines de semana y feriados. Llamada y técnico en camino las 24 horas.", msg: "EMERGENCIA: necesito un técnico ahora." },
+const serviceGroups = [
+  {
+    icon: Power,
+    category: "Sin agua / No arranca",
+    outcome: "Diagnóstico eléctrico y mecánico. Tu bomba funcionando hoy.",
+    services: ["Bombas que no arrancan", "Falla de motor/capacitor", "Tablero eléctrico"],
+    msg: "Hola, mi bomba de agua no arranca. Necesito un técnico.",
+  },
+  {
+    icon: Gauge,
+    category: "Baja presión",
+    outcome: "Recuperamos la presión normal en duchas, calefón y termotanque.",
+    services: ["Presión baja en pisos altos", "Goteo en duchas", "Calibración de presóstato"],
+    msg: "Hola, tengo baja presión de agua en casa.",
+  },
+  {
+    icon: Droplets,
+    category: "ROWA y presurizadoras",
+    outcome: "Especialistas en toda la línea ROWA con repuestos originales.",
+    services: ["ROWA Tango, Press, Mini", "Grundfos, Salmson, DAB", "Pérdidas, ruidos, vibración"],
+    msg: "Hola, necesito service para mi bomba ROWA.",
+  },
+  {
+    icon: Settings,
+    category: "Instalación / Mantenimiento",
+    outcome: "Instalación profesional y planes preventivos para no quedarte sin agua.",
+    services: ["Instalación de bomba nueva", "Mantenimiento preventivo", "Consorcios y comercios"],
+    msg: "Hola, quiero consultar por instalación o mantenimiento.",
+  },
 ];
 
 export const Services = () => (
-  <section id="servicios" className="py-16 md:py-24 bg-background">
+  <section id="servicios" className="py-14 md:py-20 bg-background">
     <div className="container mx-auto px-4">
       <div className="max-w-2xl mx-auto text-center reveal">
-        <span className="text-xs font-bold tracking-[0.2em] text-accent uppercase">Servicios</span>
-        <h2 className="mt-3 font-display font-extrabold text-3xl md:text-5xl text-primary text-balance">
-          Solucionamos cualquier problema de bombas de agua
+        <span className="text-[11px] font-bold tracking-[0.2em] text-accent uppercase">Servicios</span>
+        <h2 className="mt-3 font-display font-extrabold text-primary text-balance">
+          ¿Qué problema tenés?
         </h2>
-        <p className="mt-4 text-muted-foreground text-balance">
-          Más de 15 años resolviendo urgencias en Buenos Aires. Tenemos los repuestos y la experiencia para que el agua vuelva hoy.
+        <p className="mt-3 text-muted-foreground text-balance">
+          Más de 15 años resolviendo urgencias en Buenos Aires. Seleccioná tu situación.
         </p>
       </div>
 
-      <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {services.map(({ icon: Icon, title, desc, msg }, i) => (
+      <div className="mt-10 grid sm:grid-cols-2 gap-4 max-w-4xl mx-auto">
+        {serviceGroups.map(({ icon: Icon, category, outcome, services, msg }, i) => (
           <article
-            key={title}
-            className="reveal group relative bg-card border border-border rounded-2xl p-6 hover:border-accent/60 hover:-translate-y-1 transition-all duration-300 hover:shadow-elegant"
-            style={{ transitionDelay: `${i * 40}ms` }}
+            key={category}
+            className="reveal group relative bg-card border border-border rounded-xl p-5 md:p-6 hover:border-accent/50 transition-all duration-200 hover:shadow-soft"
+            style={{ transitionDelay: `${i * 50}ms` }}
           >
-            <div className="w-12 h-12 rounded-xl bg-accent/10 grid place-items-center group-hover:bg-accent group-hover:scale-110 transition-all">
-              <Icon className="w-6 h-6 text-accent group-hover:text-accent-foreground" />
+            {/* Problem → Solution header */}
+            <div className="flex items-start gap-4 mb-4">
+              <div className="w-11 h-11 rounded-lg bg-accent/10 grid place-items-center shrink-0 group-hover:bg-accent transition-colors duration-200">
+                <Icon className="w-5 h-5 text-accent group-hover:text-primary" />
+              </div>
+              <div className="min-w-0">
+                <h3 className="font-display font-bold text-base text-primary leading-tight">{category}</h3>
+                <p className="mt-1 text-sm text-muted-foreground leading-snug">{outcome}</p>
+              </div>
             </div>
-            <h3 className="mt-4 font-display font-bold text-lg text-primary">{title}</h3>
-            <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{desc}</p>
+
+            {/* Service list – scannable rows */}
+            <ul className="mb-4 space-y-1.5 pl-[3.75rem]">
+              {services.map((s) => (
+                <li key={s} className="text-[13px] text-slate-500 before:content-['·'] before:mr-2 before:text-accent before:font-bold">
+                  {s}
+                </li>
+              ))}
+            </ul>
+
+            {/* WhatsApp action */}
             <a
               href={waLink(msg)}
               target="_blank"
               rel="noopener"
-              className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:gap-2.5 transition-all"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-whatsapp hover:gap-2.5 transition-all pl-[3.75rem]"
             >
-              <MessageCircle className="w-4 h-4" /> Pedir presupuesto →
+              <MessageCircle className="w-4 h-4" /> Consultar por WhatsApp
             </a>
           </article>
         ))}

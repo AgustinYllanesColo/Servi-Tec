@@ -1,30 +1,33 @@
 import { useState } from "react";
-import { AlertCircle, ArrowLeft, ArrowRight, Check, Clock, Droplets, ShieldCheck, Zap } from "lucide-react";
+import { AlertCircle, ArrowLeft, ArrowRight, Check, Clock, Droplets, ShieldCheck, Zap, MessageCircle } from "lucide-react";
 import { waLink } from "@/config/contact";
 
 const steps = [
   {
     id: 1,
     question: "¿Qué problema tiene tu bomba?",
+    helper: "Elegí la opción más cercana.",
     options: [
-      { id: "no-arranca", label: "No arranca / No hace nada", icon: Zap },
-      { id: "poca-presion", label: "Poca presión de agua", icon: Droplets },
-      { id: "no-corta", label: "No corta (funciona seguido)", icon: Clock },
-      { id: "pierde-agua", label: "Pierde agua / Ruidos raros", icon: AlertCircle },
+      { id: "no-arranca", label: "No arranca", icon: Zap },
+      { id: "poca-presion", label: "Poca presión", icon: Droplets },
+      { id: "no-corta", label: "No corta", icon: Clock },
+      { id: "pierde-agua", label: "Pierde agua / Ruidos", icon: AlertCircle },
     ],
   },
   {
     id: 2,
     question: "¿De qué marca es?",
+    helper: "Si no sabés, elegí 'Otra'.",
     options: [
-      { id: "rowa", label: "ROWA (Especialistas)", icon: ShieldCheck },
+      { id: "rowa", label: "ROWA", icon: ShieldCheck },
       { id: "grundfos", label: "Grundfos / Salmson", icon: ShieldCheck },
       { id: "otra", label: "Otra / No sé", icon: ShieldCheck },
     ],
   },
   {
     id: 3,
-    question: "¿Dónde se encuentra?",
+    question: "¿Dónde estás?",
+    helper: "Para asignar el técnico más cercano.",
     options: [
       { id: "caba", label: "CABA", icon: ShieldCheck },
       { id: "gba-norte", label: "GBA Norte", icon: ShieldCheck },
@@ -48,7 +51,7 @@ export const DiagnosisWidget = () => {
 
   const summary = {
     problem: getAnswerLabel(0),
-    brand: getAnswerLabel(1).replace(" (Especialistas)", ""),
+    brand: getAnswerLabel(1),
     zone: getAnswerLabel(2),
   };
 
@@ -62,98 +65,133 @@ export const DiagnosisWidget = () => {
   };
 
   const handleBack = () => {
+    if (isFinished) {
+      setIsFinished(false);
+      return;
+    }
     if (currentStep === 0) return;
     setCurrentStep(currentStep - 1);
   };
 
+  const handleReset = () => {
+    setCurrentStep(0);
+    setAnswers({});
+    setIsFinished(false);
+  };
+
   const getUrgencyMessage = () =>
-    `Hola, realicé el diagnóstico web. Problema: ${summary.problem}. Marca: ${summary.brand}. Zona: ${summary.zone}. Necesito coordinar un técnico.`;
+    `Hola, realicé el diagnóstico web.\n• Problema: ${summary.problem}\n• Marca: ${summary.brand}\n• Zona: ${summary.zone}\nNecesito coordinar un técnico.`;
 
   return (
-    <section id="diagnosis" className="py-14 md:py-28">
+    <section id="diagnosis" className="py-12 md:py-20">
       <div className="container mx-auto px-4">
-        <div className="relative mx-auto max-w-4xl overflow-hidden rounded-3xl bg-primary p-6 shadow-2xl md:p-12">
-          <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-accent/10 blur-3xl -mr-32 -mt-32" />
+        <div className="relative mx-auto max-w-3xl overflow-hidden rounded-2xl bg-primary p-5 shadow-xl md:p-10">
+          {/* Subtle glow */}
+          <div className="pointer-events-none absolute right-0 top-0 h-48 w-48 rounded-full bg-accent/[0.06] blur-[60px] -mr-24 -mt-24" />
 
           <div className="relative z-10">
             {!isFinished ? (
               <>
-                <div className="mb-8">
-                  <div className="mb-5 flex items-center justify-between gap-4">
-                    <span className="text-xs font-black uppercase tracking-[0.22em] text-accent">
+                {/* Progress */}
+                <div className="mb-6">
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
                       Paso {currentStep + 1} de {steps.length}
                     </span>
                     {currentStep > 0 && (
                       <button
                         type="button"
                         onClick={handleBack}
-                        className="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-2 text-xs font-bold text-white/80 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-white/70 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent transition-colors"
                       >
-                        <ArrowLeft className="h-4 w-4" /> Atrás
+                        <ArrowLeft className="h-3.5 w-3.5" /> Atrás
                       </button>
                     )}
                   </div>
 
-                  <div className="mb-5 flex gap-2" aria-hidden="true">
+                  {/* Progress bar */}
+                  <div className="flex gap-1.5" aria-hidden="true">
                     {steps.map((_, i) => (
                       <div
                         key={i}
-                        className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${
+                        className={`h-1 flex-1 rounded-full transition-all duration-400 ${
                           i <= currentStep ? "bg-accent" : "bg-white/10"
                         }`}
                       />
                     ))}
                   </div>
-
-                  <h2 className="mb-3 font-display text-3xl font-extrabold leading-tight text-white md:text-5xl">
-                    {steps[currentStep].question}
-                  </h2>
-                  <p className="max-w-2xl text-sm text-white/60 md:text-base">
-                    Elegí la opción más cercana. Con esto armamos un mensaje claro para coordinar más rápido.
-                  </p>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                {/* Question */}
+                <h2 className="mb-2 font-display text-2xl font-extrabold leading-tight text-white md:text-4xl">
+                  {steps[currentStep].question}
+                </h2>
+                <p className="mb-6 text-sm text-white/50 md:text-base">
+                  {steps[currentStep].helper}
+                </p>
+
+                {/* Options grid */}
+                <div className={`grid gap-3 ${steps[currentStep].options.length <= 3 ? "sm:grid-cols-3" : "grid-cols-2"}`}>
                   {steps[currentStep].options.map((option) => (
                     <button
                       key={option.id}
                       onClick={() => handleOption(option.id)}
-                      className="group flex min-h-24 items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition-all hover:border-white hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                      className="group flex min-h-[3.5rem] items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-4 text-left transition-all duration-200 hover:border-accent hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent active:scale-[0.97]"
                     >
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 transition-colors group-hover:bg-accent/20">
-                        <option.icon className="h-6 w-6 text-accent" />
-                      </div>
-                      <span className="text-lg font-bold text-white group-hover:text-primary">{option.label}</span>
+                      <option.icon className="h-5 w-5 text-accent shrink-0" />
+                      <span className="text-sm font-semibold text-white md:text-base">{option.label}</span>
                     </button>
                   ))}
                 </div>
               </>
             ) : (
-              <div className="animate-float-up text-center">
-                <div className="mx-auto mb-7 flex h-20 w-20 items-center justify-center rounded-2xl border border-accent/20 bg-accent/15">
-                  <Check className="h-10 w-10 text-accent" />
-                </div>
-                <h3 className="mb-5 text-3xl font-extrabold text-white md:text-5xl">Diagnóstico listo</h3>
-                <p className="mx-auto mb-7 max-w-xl text-lg text-white/70 md:text-xl">
-                  Tenemos la información clave para responderte sin ida y vuelta innecesaria.
-                </p>
-
-                <div className="mx-auto mb-8 grid max-w-xl gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
-                  <div className="rounded-xl bg-white/5 px-4 py-3 text-sm font-bold text-white">
-                    Problema: {summary.problem}
+              /* Completion state */
+              <div className="animate-float-up">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15 border border-accent/20">
+                    <Check className="h-6 w-6 text-accent" />
                   </div>
-                  <div className="rounded-xl bg-white/5 px-4 py-3 text-sm font-bold text-white">Marca: {summary.brand}</div>
-                  <div className="rounded-xl bg-white/5 px-4 py-3 text-sm font-bold text-white">Zona: {summary.zone}</div>
+                  <div>
+                    <h3 className="text-xl font-extrabold text-white md:text-2xl">Diagnóstico listo</h3>
+                    <p className="text-sm text-white/50">Información lista para coordinar tu técnico.</p>
+                  </div>
                 </div>
 
+                {/* Summary */}
+                <div className="mb-6 space-y-2 rounded-xl border border-white/10 bg-white/[0.04] p-4">
+                  <div className="flex items-center justify-between rounded-lg bg-white/[0.04] px-4 py-2.5">
+                    <span className="text-xs font-semibold text-white/50 uppercase tracking-wider">Problema</span>
+                    <span className="text-sm font-bold text-white">{summary.problem}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg bg-white/[0.04] px-4 py-2.5">
+                    <span className="text-xs font-semibold text-white/50 uppercase tracking-wider">Marca</span>
+                    <span className="text-sm font-bold text-white">{summary.brand}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg bg-white/[0.04] px-4 py-2.5">
+                    <span className="text-xs font-semibold text-white/50 uppercase tracking-wider">Zona</span>
+                    <span className="text-sm font-bold text-white">{summary.zone}</span>
+                  </div>
+                </div>
+
+                {/* Actions */}
                 <a
                   href={waLink(getUrgencyMessage())}
                   target="_blank"
                   rel="noopener"
-                  className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-whatsapp px-8 text-lg font-black text-white transition-transform hover:scale-[1.02] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  id="diagnosis-cta-whatsapp"
+                  className="flex h-14 w-full items-center justify-center gap-3 rounded-xl bg-whatsapp text-base font-bold text-white transition-all hover:brightness-110 active:scale-[0.97]"
                 >
-                  Enviar a WhatsApp <ArrowRight className="h-6 w-6" />
+                  <MessageCircle className="h-5 w-5" /> Enviar diagnóstico por WhatsApp
+                  <ArrowRight className="h-5 w-5" />
                 </a>
+
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="mt-3 w-full text-center text-sm font-medium text-white/40 hover:text-white/70 transition-colors"
+                >
+                  Volver a empezar
+                </button>
               </div>
             )}
           </div>

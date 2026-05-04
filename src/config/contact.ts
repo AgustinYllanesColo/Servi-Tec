@@ -27,3 +27,24 @@ export const contactHasPlaceholders =
   CONTACT.phoneDisplay.includes("0000") || CONTACT.phoneHref.includes("0000") || CONTACT.whatsappNumber.includes("0000");
 
 export const waLink = (msg?: string) => buildWhatsAppLink(CONTACT.whatsappNumber, msg ?? CONTACT.whatsappDefaultMsg);
+
+/**
+ * Validates that a WhatsApp message has real content beyond just greetings.
+ * Returns true if the message has meaningful content.
+ */
+export const isValidWhatsAppMessage = (msg: string): boolean => {
+  const cleaned = sanitizeContactText(msg);
+  // Must have at least 10 meaningful characters after removing common filler
+  const withoutFiller = cleaned
+    .replace(/^hola\s*/i, "")
+    .replace(/servitec\s*/i, "")
+    .replace(/[,.\s]/g, "");
+  return withoutFiller.length >= 5;
+};
+
+// Show config warning in development only
+if (import.meta.env.DEV && contactHasPlaceholders) {
+  console.warn(
+    "[SERVITEC] ⚠️ Contact data uses placeholder values (0000). Set VITE_CONTACT_* env vars before deploying.",
+  );
+}

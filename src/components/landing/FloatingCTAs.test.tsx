@@ -9,7 +9,7 @@ describe("FloatingCTAs", () => {
     const mobileBar = screen.getByTestId("mobile-contact-bar");
     expect(mobileBar).toHaveAttribute("aria-hidden", "true");
 
-    Object.defineProperty(window, "scrollY", { configurable: true, value: 480 });
+    Object.defineProperty(window, "scrollY", { configurable: true, value: 600 });
     fireEvent.scroll(window);
 
     expect(mobileBar).toHaveAttribute("aria-hidden", "false");

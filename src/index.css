@@ -6,7 +6,8 @@
 
 @layer base {
   :root {
-    /* SERVITEC palette: deep navy, white, technical cyan/green */
+    /* ─── SERVITEC Design System ─── */
+    /* Deep navy + technical teal, refined neutrals */
     --background: 0 0% 100%;
     --foreground: 220 45% 12%;
 
@@ -20,40 +21,40 @@
     --primary-foreground: 0 0% 100%;
     --primary-glow: 215 60% 28%;
 
-    --secondary: 210 30% 96%;
+    --secondary: 210 20% 97%;        /* slate-50 clean */
     --secondary-foreground: 218 70% 17%;
 
-    --muted: 210 25% 95%;
-    --muted-foreground: 218 18% 38%;
+    --muted: 210 18% 95%;            /* slate-100 */
+    --muted-foreground: 218 15% 42%;
 
-    --accent: 174 80% 42%;            /* technical cyan/teal */
+    --accent: 174 72% 40%;           /* technical teal, slightly calmer */
     --accent-foreground: 218 70% 12%;
-    --accent-glow: 168 85% 48%;
+    --accent-glow: 168 75% 44%;
 
     --whatsapp: 142 70% 42%;
     --whatsapp-foreground: 0 0% 100%;
 
-    --urgent: 14 90% 56%;
+    --urgent: 14 80% 54%;
     --urgent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 218 20% 88%;
-    --input: 218 20% 90%;
-    --ring: 174 80% 42%;
+    --border: 218 16% 90%;
+    --input: 218 16% 91%;
+    --ring: 174 72% 40%;
 
-    --radius: 0.875rem;
+    --radius: 0.75rem;               /* 12px base radius */
 
-    --gradient-hero: linear-gradient(135deg, hsl(218 75% 10%) 0%, hsl(215 65% 18%) 60%, hsl(190 70% 22%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(174 80% 42%), hsl(168 85% 48%));
+    /* Gradients */
+    --gradient-hero: linear-gradient(160deg, hsl(218 75% 10%) 0%, hsl(215 65% 16%) 55%, hsl(200 50% 18%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(174 72% 40%), hsl(168 75% 44%));
     --gradient-dark: linear-gradient(180deg, hsl(218 70% 12%), hsl(218 75% 8%));
-    --gradient-radial: radial-gradient(ellipse at top right, hsl(174 80% 42% / 0.25), transparent 60%);
 
-    --shadow-soft: 0 4px 20px -4px hsl(218 70% 17% / 0.12);
-    --shadow-elegant: 0 20px 60px -20px hsl(218 70% 17% / 0.35);
-    --shadow-glow: 0 0 40px hsl(174 80% 42% / 0.45);
-    --shadow-cta: 0 12px 32px -8px hsl(174 80% 42% / 0.6);
+    /* Shadows – reduced glow, more depth */
+    --shadow-soft: 0 2px 12px -3px hsl(218 70% 17% / 0.08);
+    --shadow-elegant: 0 12px 40px -12px hsl(218 70% 17% / 0.18);
+    --shadow-cta: 0 8px 24px -6px hsl(142 70% 42% / 0.35);
 
     --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -63,30 +64,37 @@
   * { @apply border-border; }
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 5rem;
+    scroll-padding-top: 4.5rem;
   }
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    overflow-x: hidden;
   }
   h1, h2, h3, h4 {
     font-family: 'Sora', system-ui, sans-serif;
     @apply tracking-tight;
   }
+  /* Typography scale – Mobile-first */
+  h1 { font-size: clamp(2.5rem, 5vw + 1rem, 5.5rem); line-height: 1.02; }
+  h2 { font-size: clamp(1.875rem, 3vw + 0.5rem, 3.5rem); line-height: 1.1; }
 }
 
 @layer utilities {
   section[id],
   div[id] {
-    scroll-margin-top: 5rem;
+    scroll-margin-top: 4.5rem;
   }
 
   @media (max-width: 767px) {
     body {
-      padding-bottom: 6.25rem;
+      padding-bottom: 5rem;
     }
   }
 
+  /* ─── Reduced motion ─── */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -98,49 +106,70 @@
     }
   }
 
+  /* ─── Gradient utilities ─── */
   .bg-hero { background: var(--gradient-hero); }
   .bg-accent-gradient { background: var(--gradient-accent); }
   .bg-dark-gradient { background: var(--gradient-dark); }
   .shadow-cta { box-shadow: var(--shadow-cta); }
   .shadow-elegant { box-shadow: var(--shadow-elegant); }
-  .shadow-glow { box-shadow: var(--shadow-glow); }
+  .shadow-soft { box-shadow: var(--shadow-soft); }
 
+  /* ─── Fail-open reveal system ─── */
+  /* By default, .reveal is fully visible (fail-open). */
   .reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s var(--transition-smooth), transform 0.7s var(--transition-smooth);
+    opacity: 1;
+    transform: none;
   }
-  .reveal.is-visible {
+  /* Only when JS adds .reveal-ready, elements start hidden and animate in. */
+  .reveal-ready .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s var(--transition-smooth), transform 0.6s var(--transition-smooth);
+  }
+  .reveal-ready .reveal.is-visible {
     opacity: 1;
     transform: translateY(0);
   }
 
   .text-balance { text-wrap: balance; }
 
-  @keyframes pulse-ring {
-    0% { box-shadow: 0 0 0 0 hsl(var(--accent) / 0.55); }
-    70% { box-shadow: 0 0 0 18px hsl(var(--accent) / 0); }
-    100% { box-shadow: 0 0 0 0 hsl(var(--accent) / 0); }
-  }
-  .pulse-ring { animation: pulse-ring 2s infinite; }
-
+  /* ─── Animations ─── */
   @keyframes float-up {
-    from { opacity: 0; transform: translateY(40px); }
+    from { opacity: 0; transform: translateY(32px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  .animate-float-up { animation: float-up 0.8s var(--transition-smooth) both; }
+  .animate-float-up { animation: float-up 0.7s var(--transition-smooth) both; }
 
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+  @keyframes pulse-subtle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
   }
+  .pulse-subtle { animation: pulse-subtle 2s ease-in-out infinite; }
 
   @keyframes marquee {
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
   }
-
   .animate-marquee {
     animation: marquee 30s linear infinite;
+  }
+
+  /* ─── Placeholder config warning ─── */
+  .placeholder-warning {
+    position: relative;
+  }
+  .placeholder-warning::after {
+    content: "⚠ Config placeholder";
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: hsl(14 80% 54%);
+    color: white;
+    font-weight: 700;
+    pointer-events: none;
+    z-index: 99;
   }
 }

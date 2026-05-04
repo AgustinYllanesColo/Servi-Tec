@@ -12,34 +12,49 @@ const faqs = [
 
 export const FAQ = () => {
   const [open, setOpen] = useState<number | null>(0);
+
   return (
-    <section id="faq" className="py-16 md:py-24 bg-secondary">
+    <section id="faq" className="py-14 md:py-20 bg-secondary">
       <div className="container mx-auto px-4">
         <div className="max-w-2xl mx-auto text-center reveal">
-          <span className="text-xs font-bold tracking-[0.2em] text-accent uppercase">Preguntas frecuentes</span>
-          <h2 className="mt-3 font-display font-extrabold text-3xl md:text-5xl text-primary text-balance">
+          <span className="text-[11px] font-bold tracking-[0.2em] text-accent uppercase">Preguntas frecuentes</span>
+          <h2 className="mt-3 font-display font-extrabold text-primary text-balance">
             Lo que más nos consultan
           </h2>
         </div>
-        <div className="mt-10 max-w-3xl mx-auto space-y-3">
+
+        <div className="mt-8 max-w-2xl mx-auto space-y-2">
           {faqs.map((f, i) => {
             const isOpen = open === i;
             return (
-              <div key={f.q} className="reveal bg-card border border-border rounded-xl overflow-hidden">
+              <div
+                key={f.q}
+                className="reveal bg-card border border-border rounded-xl overflow-hidden"
+                style={{ transitionDelay: `${i * 30}ms` }}
+              >
                 <button
                   onClick={() => setOpen(isOpen ? null : i)}
-                  className="w-full flex items-center justify-between gap-4 text-left px-5 py-4 font-display font-semibold text-primary hover:bg-accent/5 transition-colors"
+                  className="w-full flex items-center justify-between gap-3 text-left px-5 py-4 font-display font-semibold text-sm md:text-base text-primary hover:bg-accent/[0.03] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
                   aria-expanded={isOpen}
+                  id={`faq-btn-${i}`}
+                  aria-controls={`faq-panel-${i}`}
                 >
                   <span>{f.q}</span>
-                  <ChevronDown className={`w-5 h-5 text-accent shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                  <ChevronDown
+                    className={`w-4 h-4 text-accent shrink-0 transition-transform duration-200 ${
+                      isOpen ? "rotate-180" : ""
+                    }`}
+                  />
                 </button>
                 <div
-                  className="grid transition-all duration-300"
+                  id={`faq-panel-${i}`}
+                  role="region"
+                  aria-labelledby={`faq-btn-${i}`}
+                  className="grid transition-all duration-200"
                   style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
                 >
                   <div className="overflow-hidden">
-                    <p className="px-5 pb-5 text-muted-foreground leading-relaxed">{f.a}</p>
+                    <p className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed">{f.a}</p>
                   </div>
                 </div>
               </div>

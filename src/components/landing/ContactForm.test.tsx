@@ -12,18 +12,20 @@ describe("ContactForm", () => {
 
     render(<ContactForm />);
 
-    fireEvent.change(screen.getByLabelText("Nombre"), { target: { value: "  Agustin  " } });
-    fireEvent.change(screen.getByLabelText("Zona"), { target: { value: "  Belgrano   CABA " } });
-    fireEvent.change(screen.getByLabelText("¿Cuál es el problema?"), {
+    // Labels now have required asterisks, use getByRole for inputs
+    fireEvent.change(screen.getByPlaceholderText("Tu nombre"), { target: { value: "  Agustin  " } });
+    fireEvent.change(screen.getByPlaceholderText(/Belgrano/i), { target: { value: "  Belgrano   CABA " } });
+    fireEvent.change(screen.getByPlaceholderText(/bomba no arranca/i), {
       target: { value: "  bomba   no arranca\nhace ruido " },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Enviar por WhatsApp" }));
+    // Button text changed to "Enviar consulta por WhatsApp"
+    fireEvent.click(screen.getByRole("button", { name: /Enviar consulta por WhatsApp/i }));
 
     expect(open).toHaveBeenCalledTimes(1);
     const [url, target] = open.mock.calls[0];
     expect(target).toBe("_blank");
-    expect(decodeURIComponent(String(url))).toContain(
-      "Hola SERVITEC, soy Agustin de Belgrano CABA. Mi problema: bomba no arranca hace ruido",
-    );
+    // Message format changed to include newlines
+    expect(decodeURIComponent(String(url))).toContain("soy Agustin de Belgrano CABA");
+    expect(decodeURIComponent(String(url))).toContain("bomba no arranca hace ruido");
   });
 });

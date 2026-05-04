@@ -6,7 +6,10 @@ describe("Header", () => {
   it("links opinions navigation to the testimonials section", () => {
     render(<Header />);
 
-    expect(screen.getByRole("link", { name: "Opiniones" })).toHaveAttribute("href", "#testimonios");
+    // Desktop nav and mobile nav both render now; use getAllByRole and check at least one
+    const links = screen.getAllByRole("link", { name: "Opiniones" });
+    expect(links.length).toBeGreaterThanOrEqual(1);
+    links.forEach((link) => expect(link).toHaveAttribute("href", "#testimonios"));
   });
 
   it("closes the mobile menu after choosing a section", () => {
