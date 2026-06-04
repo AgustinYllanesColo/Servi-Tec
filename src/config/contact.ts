@@ -15,9 +15,9 @@ export const buildWhatsAppLink = (whatsappNumber: string, msg: string) =>
 // Reemplazar estos valores con variables VITE_* reales antes de publicar campañas.
 export const CONTACT = {
   brand: sanitizeContactText(env.VITE_CONTACT_BRAND || "SERVITEC"),
-  phoneDisplay: sanitizeContactText(env.VITE_CONTACT_PHONE_DISPLAY || "+54 11 0000-0000"),
-  phoneHref: normalizePhoneHref(env.VITE_CONTACT_PHONE_E164 || "+54 11 0000-0000"),
-  whatsappNumber: onlyDigits(env.VITE_CONTACT_WHATSAPP || "5491100000000"),
+  phoneDisplay: sanitizeContactText(env.VITE_CONTACT_PHONE_DISPLAY || "+54 11 3571-7218"),
+  phoneHref: normalizePhoneHref(env.VITE_CONTACT_PHONE_E164 || "+54 11 3571-7218"),
+  whatsappNumber: onlyDigits(env.VITE_CONTACT_WHATSAPP || "5491135717218"),
   whatsappDefaultMsg: sanitizeContactText(
     env.VITE_CONTACT_DEFAULT_MESSAGE || "Hola SERVITEC, necesito service de bomba de agua. ¿Pueden ayudarme?",
   ),
